@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/aphistic/gomol"
 
@@ -82,8 +83,8 @@ func (s *GomolSuite) TestWriterMultipleMessages(c *C) {
 	cfg := NewWriterLoggerConfig()
 	wl, err := NewWriterLogger(&b, cfg)
 	c.Assert(err, IsNil)
-	wl.Logm(gomol.LEVEL_DEBUG, nil, "dbg 1234")
-	wl.Logm(gomol.LEVEL_WARNING, nil, "warn 4321")
+	wl.Logm(time.Now(), gomol.LEVEL_DEBUG, nil, "dbg 1234")
+	wl.Logm(time.Now(), gomol.LEVEL_WARNING, nil, "warn 4321")
 
 	wl.flushMessages()
 
@@ -99,10 +100,10 @@ func (s *GomolSuite) TestWriterFlushOnBufferSize(c *C) {
 
 	c.Check(wl.buffer, HasLen, 0)
 
-	wl.Logm(gomol.LEVEL_DEBUG, nil, "Message 1")
+	wl.Logm(time.Now(), gomol.LEVEL_DEBUG, nil, "Message 1")
 	c.Check(wl.buffer, HasLen, 1)
 
-	wl.Logm(gomol.LEVEL_DEBUG, nil, "Message 2")
+	wl.Logm(time.Now(), gomol.LEVEL_DEBUG, nil, "Message 2")
 	c.Check(wl.buffer, HasLen, 0)
 
 	c.Check(strings.Count(b.String(), "\n"), Equals, 2)
@@ -120,8 +121,8 @@ func (s *GomolSuite) TestWriterToFile(c *C) {
 	cfg := NewWriterLoggerConfig()
 	wl, _ := NewWriterLogger(f, cfg)
 	wl.InitLogger()
-	wl.Logm(gomol.LEVEL_DEBUG, nil, "Message 1")
-	wl.Logm(gomol.LEVEL_FATAL, nil, "Message 2")
+	wl.Logm(time.Now(), gomol.LEVEL_DEBUG, nil, "Message 1")
+	wl.Logm(time.Now(), gomol.LEVEL_FATAL, nil, "Message 2")
 	wl.ShutdownLogger()
 
 	fData, err := ioutil.ReadFile(f.Name())
@@ -137,7 +138,7 @@ func (s *GomolSuite) TestWriterLogmNoAttrs(c *C) {
 	cfg := NewWriterLoggerConfig()
 	wl, err := NewWriterLogger(&b, cfg)
 	c.Assert(err, IsNil)
-	wl.Logm(gomol.LEVEL_DEBUG, nil, "test")
+	wl.Logm(time.Now(), gomol.LEVEL_DEBUG, nil, "test")
 
 	wl.flushMessages()
 
@@ -150,6 +151,7 @@ func (s *GomolSuite) TestWriterLogmAttrs(c *C) {
 	wl, err := NewWriterLogger(&b, cfg)
 	c.Assert(err, IsNil)
 	wl.Logm(
+		time.Now(),
 		gomol.LEVEL_DEBUG,
 		map[string]interface{}{
 			"attr1": 4321,
@@ -172,6 +174,7 @@ func (s *GomolSuite) TestWriterBaseAttrs(c *C) {
 	c.Check(err, IsNil)
 	b.AddLogger(wl)
 	wl.Logm(
+		time.Now(),
 		gomol.LEVEL_DEBUG,
 		map[string]interface{}{
 			"attr1": 4321,

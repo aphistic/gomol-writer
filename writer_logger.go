@@ -118,8 +118,8 @@ func (l *WriterLogger) flushMessages() error {
 	return nil
 }
 
-func (l *WriterLogger) Logm(level gomol.LogLevel, m map[string]interface{}, msg string) error {
-	newMsg := newMessage(l.base, level, m, msg)
+func (l *WriterLogger) Logm(timestamp time.Time, level gomol.LogLevel, m map[string]interface{}, msg string) error {
+	newMsg := gomol.NewTemplateMsg(timestamp, level, m, msg)
 	func() {
 		l.writeLock.Lock()
 		defer l.writeLock.Unlock()
@@ -132,15 +132,4 @@ func (l *WriterLogger) Logm(level gomol.LogLevel, m map[string]interface{}, msg 
 	}
 
 	return nil
-}
-
-func newMessage(base *gomol.Base, level gomol.LogLevel, m map[string]interface{}, msg string) *gomol.TemplateMsg {
-	tplMsg := &gomol.TemplateMsg{
-		Timestamp: time.Now(),
-		Message:   msg,
-		Level:     level,
-		LevelName: level.String(),
-		Attrs:     m,
-	}
-	return tplMsg
 }

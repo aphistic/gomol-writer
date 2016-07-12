@@ -3,14 +3,15 @@ package gomolwriter
 import (
 	"os"
 
+	gw "."
 	"github.com/aphistic/gomol"
 )
 
 // Code for the README example to make sure it still builds!
 func Example() {
 	// Add an io.Writer logger
-	writerCfg := NewWriterLoggerConfig()
-	writerLogger, _ := NewWriterLogger(os.Stdout, writerCfg)
+	writerCfg := gw.NewWriterLoggerConfig()
+	writerLogger, _ := gw.NewWriterLogger(os.Stdout, writerCfg)
 	gomol.AddLogger(writerLogger)
 
 	// Set some global attrs that will be added to all
